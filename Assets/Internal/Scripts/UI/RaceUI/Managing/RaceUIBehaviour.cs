@@ -1,4 +1,5 @@
 using Cars_5_5.UI.Base;
+using Cars_5_5.UI.RaceUI.LeaderTableElements;
 using System;
 using UnityEngine;
 
@@ -9,14 +10,22 @@ namespace Cars_5_5.UI.RaceUI.Managing
         [SerializeField]
         private bool _startRaceImmediate = false;
 
+        [SerializeField, Space(15)]
         private TimeComponent _raceTimer;
+        [SerializeField]
         private StartRaceInviter _raceInviter;
+        [SerializeField]
         private StartRaceCountDown _countDown;
+        [SerializeField]
         private SpeedometerComponent _speedometer;
+        [SerializeField]
         private LapCounterComponent _lapCounter;
+        [SerializeField]
+        private LeaderTable _leaderBoard;
+        [SerializeField]
+        private AddRecordDialog _addRecordDialog;
 
-        public EventHandler RaceStarted;
-        public EventHandler RaceEnded;
+        public EventHandler StartCountDownElapsed;
 
         public void RacePreStart()
         {
@@ -24,53 +33,38 @@ namespace Cars_5_5.UI.RaceUI.Managing
             {
                 SetUIElementVisible(_raceInviter, false);
                 SetUIElementVisible(_countDown, false);
-                if (SetUIElementVisible(_lapCounter, false))
-                {
-                    _lapCounter.AllLapsPassed += OnRaceEnded;
-                }
-                OnRaceStarted(null, null);
+                SetUIElementVisible(_addRecordDialog, false);
+                SetUIElementVisible(_leaderBoard, false);
+                SetUIElementVisible(_lapCounter, false);
+
+                OnCountDownElapsed(null, null);
             }
             else
             {
-                if (SetUIElementVisible(_raceInviter, true))
-                {
-                    _raceInviter.StartAccept += OnRaceStartAccept;
-                }
-                if (SetUIElementVisible(_countDown, false))
-                {
-                    _countDown.Elapsed += OnRaceStarted;
-                }
-                if (SetUIElementVisible(_lapCounter, false))
-                {
-                    _lapCounter.AllLapsPassed += OnRaceEnded;
-                }
+                SetUIElementVisible(_raceInviter, true);
+                SetUIElementVisible(_countDown, false);
+                SetUIElementVisible(_lapCounter, false);
                 SetUIElementVisible(_raceTimer, false);
                 SetUIElementVisible(_speedometer, false);
+                SetUIElementVisible(_addRecordDialog, false);
+                SetUIElementVisible(_leaderBoard, false);
+
+                _raceInviter.StartAccept += OnRaceStartAccept;
+                _countDown.Elapsed += OnCountDownElapsed;
             }
         }
 
         private void OnDisable()
         {
-            if (_raceInviter != null)
-            {
-                _raceInviter.StartAccept -= OnRaceStartAccept;
-            }
-            if (_countDown != null)
-            {
-                _countDown.Elapsed -= OnRaceStarted;
-            }
-            if (_lapCounter != null)
-            {
-                _lapCounter.AllLapsPassed -= OnRaceEnded;
-            }
-            RaceStarted = null;
-            RaceEnded = null;
+            _raceInviter.StartAccept -= OnRaceStartAccept;
+            _countDown.Elapsed -= OnCountDownElapsed;
+            StartCountDownElapsed = null;
         }
 
         public void OnLapPassedByPlayer()
         {
             _lapCounter.IncreaseLapCount();
-            if (_lapCounter.PassedLapsCount > 1)
+            if (_lapCounter.CurrentLap > 1)
             {
                 _raceTimer.OnLapPassed();
             }
@@ -82,46 +76,62 @@ namespace Cars_5_5.UI.RaceUI.Managing
             _countDown.StartCountDown();
         }
 
-        private void OnRaceStarted(object sender, EventArgs e)
+        private void OnCountDownElapsed(object sender, EventArgs e)
         {
-            RaceStarted?.Invoke(this, EventArgs.Empty);
-            if (SetUIElementVisible(_raceTimer, true))
+            StartCountDownElapsed?.Invoke(this, EventArgs.Empty);
+            SetRaceUIState(true);
+        }
+
+        public void OnPlayerFinished()
+        {
+            SetRaceUIState(false);
+            ShowAddRecordDialog();
+        }
+
+        private void ShowAddRecordDialog()
+        {
+            SetUIElementVisible(_addRecordDialog, true);
+            _addRecordDialog.RecordAdded += OnRecordAdded;
+            _addRecordDialog.BestTimeLap = _raceTimer.BestTime;
+        }
+
+        private void OnRecordAdded(object sender, EventArgs e)
+        {
+            SetUIElementVisible(_addRecordDialog, false);
+            SetUIElementVisible(_leaderBoard, true);
+        }
+
+        private void SetRaceUIState(bool inRace)
+        {
+            SetUIElementVisible(_raceTimer, inRace);
+            SetUIElementVisible(_lapCounter, inRace);
+            SetUIElementVisible(_speedometer, inRace);
+
+            if (inRace)
             {
                 _raceTimer.StartLapTimer();
-            }
-            if (SetUIElementVisible(_lapCounter, true))
-            {
                 _lapCounter.OnRaceStarted();
             }
-            SetUIElementVisible(_speedometer, true);
+            else
+            {
+                _raceTimer.StopLapTimer();
+            }
         }
 
-        private void OnRaceEnded(object sender, EventArgs e)
-        {
-            _raceTimer.StopLapTimer();
-            RaceEnded?.Invoke(this, EventArgs.Empty);
-        }
-
-        private bool SetUIElementVisible(BaseUIElement element, bool value)
+        private void SetUIElementVisible(BaseUIElement element, bool value)
         {
             if (element != null)
             {
                 element.SetVisible(value);
             }
-            return element != null;
-        }
-
-        public int GetLapCount() => _lapCounter?.LapsCount ?? 0;
-
+            else
+            {
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            _raceTimer = FindObjectOfType<TimeComponent>();
-            _raceInviter = FindObjectOfType<StartRaceInviter>();
-            _countDown = FindObjectOfType<StartRaceCountDown>();
-            _speedometer = FindObjectOfType<SpeedometerComponent>();
-            _lapCounter = FindObjectOfType<LapCounterComponent>();
-        }
+                Debug.LogWarning("UI element is null");
 #endif
+            }
+        }
+
+        public void SetLapCount(int value) => _lapCounter.SetLapCount(value);
     }
 }

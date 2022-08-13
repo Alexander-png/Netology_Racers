@@ -8,23 +8,20 @@ namespace Cars_5_5.UI.RaceUI
     public class LapCounterComponent : BaseUIElement
     {
         [SerializeField]
-        private int _laps;
-        [SerializeField]
         private TMP_Text _lapsPassedCountText;
         [SerializeField]
         private TMP_Text _lapsToPassCountText;
 
-        private int _passedLapsCount = 0;
-        
-        public EventHandler AllLapsPassed;
+        private int _laps;
+        private int _currentLap = 0;
 
         public int LapsCount => _laps;
-        public int PassedLapsCount => _passedLapsCount;
+        public int CurrentLap => _currentLap;
 
         public void OnRaceStarted()
         {
+            _currentLap = 0;
             _lapsPassedCountText.text = "1";
-            _lapsToPassCountText.text = _laps.ToString();
         }
 
         public override void SetVisible(bool value)
@@ -34,18 +31,14 @@ namespace Cars_5_5.UI.RaceUI
 
         public void IncreaseLapCount()
         {
-            if (_passedLapsCount == _laps)
-            {
-                AllLapsPassed?.Invoke(this, EventArgs.Empty);
-                return;
-            }
-            _passedLapsCount++;
-            _lapsPassedCountText.text = _passedLapsCount.ToString();
+            _currentLap++;
+            _lapsPassedCountText.text = _currentLap.ToString();
         }
 
-        private void OnDisable()
+        public void SetLapCount(int value)
         {
-            AllLapsPassed = null;
+            _laps = value;
+            _lapsToPassCountText.text = _laps.ToString();
         }
     }
 }

@@ -12,22 +12,19 @@ namespace Cars_5_5.Observers
     {
         [SerializeField]
         private BaseCarInput[] _driveableCarsOnMap;
+        [SerializeField]
+        private int _laps;
 
         private Dictionary<CarObserver, int> _lapsPassedByCar = new Dictionary<CarObserver, int>();
-
-        private int _lapsToPass;
-
         private RaceUIBehaviour _raceUIBehaviour;
 
         private void Start()
         {
             Initialize();
 
-            
             if (_raceUIBehaviour != null)
             {
-                _raceUIBehaviour.RaceStarted += OnRaceStarted;
-                _raceUIBehaviour.RaceEnded += OnRaceEnded;
+                _raceUIBehaviour.StartCountDownElapsed += OnStartCountDownElapsed;
             }
             RacePreStart();
         }
@@ -43,9 +40,9 @@ namespace Cars_5_5.Observers
 
         public void RacePreStart()
         {
-            EnableCarsHandling(false);
+            SetCarsHandlingEnabled(false);
+            _raceUIBehaviour.SetLapCount(_laps);
             _raceUIBehaviour.RacePreStart();
-            _lapsToPass = _raceUIBehaviour.GetLapCount();
         }
 
         public void OnCarReachedStartLine(BaseCarInput driveableCar)
@@ -57,6 +54,10 @@ namespace Cars_5_5.Observers
 
             if (IsCarFinishedRace(driveableCar.CarObserver))
             {
+                if (driveableCar is PlayerInputHandler)
+                {
+                    OnPlayerFinished();
+                }
                 driveableCar.WheelBehaviour.InputEnabled = false;
             }
             else
@@ -67,20 +68,20 @@ namespace Cars_5_5.Observers
 
         private bool IsCarFinishedRace(CarObserver car)
         {
-            return _lapsPassedByCar[car] == _lapsToPass;
+            return _lapsPassedByCar[car] == _laps;
         }
 
-        private void OnRaceStarted(object sender, EventArgs e)
+        private void OnStartCountDownElapsed(object sender, EventArgs e)
         {
-            EnableCarsHandling(true);
+            SetCarsHandlingEnabled(true);
         }
 
-        private void OnRaceEnded(object sender, EventArgs e)
+        private void OnPlayerFinished()
         {
-            
+            _raceUIBehaviour.OnPlayerFinished();
         }
 
-        private void EnableCarsHandling(bool value)
+        private void SetCarsHandlingEnabled(bool value)
         {
             Array.ForEach(_driveableCarsOnMap, car => car.WheelBehaviour.InputEnabled = value);
         }
