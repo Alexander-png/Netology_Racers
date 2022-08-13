@@ -13,10 +13,10 @@ namespace Cars_5_5.UI.RaceUI.Managing
         private StartRaceInviter _raceInviter;
         private StartRaceCountDown _countDown;
         private SpeedometerComponent _speedometer;
-
-        private int _lapsPassed = -1;
+        private LapCounterComponent _lapCounter;
 
         public EventHandler RaceStarted;
+        public EventHandler RaceEnded;
 
         public void RacePreStart()
         {
@@ -24,7 +24,11 @@ namespace Cars_5_5.UI.RaceUI.Managing
             {
                 SetUIElementVisible(_raceInviter, false);
                 SetUIElementVisible(_countDown, false);
-                OnStartCoundownElapsed(null, null);
+                if (SetUIElementVisible(_lapCounter, false))
+                {
+                    _lapCounter.AllLapsPassed += OnRaceEnded;
+                }
+                OnRaceStarted(null, null);
             }
             else
             {
@@ -34,7 +38,11 @@ namespace Cars_5_5.UI.RaceUI.Managing
                 }
                 if (SetUIElementVisible(_countDown, false))
                 {
-                    _countDown.Elapsed += OnStartCoundownElapsed;
+                    _countDown.Elapsed += OnRaceStarted;
+                }
+                if (SetUIElementVisible(_lapCounter, false))
+                {
+                    _lapCounter.AllLapsPassed += OnRaceEnded;
                 }
                 SetUIElementVisible(_raceTimer, false);
                 SetUIElementVisible(_speedometer, false);
@@ -49,18 +57,23 @@ namespace Cars_5_5.UI.RaceUI.Managing
             }
             if (_countDown != null)
             {
-                _countDown.Elapsed -= OnStartCoundownElapsed;
+                _countDown.Elapsed -= OnRaceStarted;
+            }
+            if (_lapCounter != null)
+            {
+                _lapCounter.AllLapsPassed -= OnRaceEnded;
             }
             RaceStarted = null;
+            RaceEnded = null;
         }
 
         public void OnLapPassedByPlayer()
         {
-            if (_lapsPassed >= 0)
+            _lapCounter.IncreaseLapCount();
+            if (_lapCounter.PassedLapsCount > 1)
             {
                 _raceTimer.OnLapPassed();
             }
-            _lapsPassed++;
         }
 
         private void OnRaceStartAccept(object sender, EventArgs e)
@@ -69,14 +82,24 @@ namespace Cars_5_5.UI.RaceUI.Managing
             _countDown.StartCountDown();
         }
 
-        private void OnStartCoundownElapsed(object sender, EventArgs e)
+        private void OnRaceStarted(object sender, EventArgs e)
         {
             RaceStarted?.Invoke(this, EventArgs.Empty);
-            if (_raceTimer != null)
+            if (SetUIElementVisible(_raceTimer, true))
             {
                 _raceTimer.StartLapTimer();
             }
+            if (SetUIElementVisible(_lapCounter, true))
+            {
+                _lapCounter.OnRaceStarted();
+            }
             SetUIElementVisible(_speedometer, true);
+        }
+
+        private void OnRaceEnded(object sender, EventArgs e)
+        {
+            _raceTimer.StopLapTimer();
+            RaceEnded?.Invoke(this, EventArgs.Empty);
         }
 
         private bool SetUIElementVisible(BaseUIElement element, bool value)
@@ -88,6 +111,8 @@ namespace Cars_5_5.UI.RaceUI.Managing
             return element != null;
         }
 
+        public int GetLapCount() => _lapCounter?.LapsCount ?? 0;
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -95,6 +120,7 @@ namespace Cars_5_5.UI.RaceUI.Managing
             _raceInviter = FindObjectOfType<StartRaceInviter>();
             _countDown = FindObjectOfType<StartRaceCountDown>();
             _speedometer = FindObjectOfType<SpeedometerComponent>();
+            _lapCounter = FindObjectOfType<LapCounterComponent>();
         }
 #endif
     }

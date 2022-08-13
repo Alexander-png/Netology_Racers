@@ -3,6 +3,7 @@ using Cars_5_5.Input;
 using Cars_5_5.Input.Base;
 using Cars_5_5.UI.RaceUI.Managing;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cars_5_5.Observers
@@ -12,13 +13,18 @@ namespace Cars_5_5.Observers
         [SerializeField]
         private BaseCarInput[] _driveableCarsOnMap;
 
+        private Dictionary<CarObserver, int> _lapsPassedByCar = new Dictionary<CarObserver, int>();
+
+        private int _lapsToPass;
+
         private RaceUIBehaviour _raceUIBehaviour;
 
         private void Start()
         {
             if (_raceUIBehaviour != null)
             {
-                _raceUIBehaviour.RaceStarted += OnRaceStarted; 
+                _raceUIBehaviour.RaceStarted += OnRaceStarted;
+                _raceUIBehaviour.RaceEnded += OnRaceEnded;
             }
             RacePreStart();
         }
@@ -27,6 +33,7 @@ namespace Cars_5_5.Observers
         {
             EnableCarsHandling(false);
             _raceUIBehaviour.RacePreStart();
+            _lapsToPass = _raceUIBehaviour.GetLapCount();
         }
 
         public void OnCarReachedStartLine(BaseCarInput driveableCar)
@@ -35,15 +42,30 @@ namespace Cars_5_5.Observers
             {
                 _raceUIBehaviour.OnLapPassedByPlayer();
             }
-            else if (driveableCar is BotInputHandler)
-            {
 
+            if (IsCarFinishedRace(driveableCar.CarObserver))
+            {
+                driveableCar.WheelBehaviour.InputEnabled = false;
             }
+            else
+            {
+                _lapsPassedByCar[driveableCar.CarObserver] += 1;
+            }
+        }
+
+        private bool IsCarFinishedRace(CarObserver car)
+        {
+            return _lapsPassedByCar[car] == _lapsToPass;
         }
 
         private void OnRaceStarted(object sender, EventArgs e)
         {
             EnableCarsHandling(true);
+        }
+
+        private void OnRaceEnded(object sender, EventArgs e)
+        {
+            
         }
 
         private void EnableCarsHandling(bool value)
@@ -55,6 +77,7 @@ namespace Cars_5_5.Observers
         private void OnValidate()
         {
             _driveableCarsOnMap = FindObjectsOfType<BaseCarInput>();
+            Array.ForEach(_driveableCarsOnMap, car => _lapsPassedByCar.Add(car.CarObserver, 0));
             _raceUIBehaviour = GetComponent<RaceUIBehaviour>();
         }
 #endif

@@ -6,9 +6,6 @@ namespace Cars_5_5.Input.Base
 {
     public abstract class BaseCarInput : MonoBehaviour
     {
-        [SerializeField]
-        private bool _inputEnabled = true;
-
         private CarObserver _carObserver;
         public CarObserver CarObserver => _carObserver;
         public WheelBehaviour WheelBehaviour => _carObserver.CarWheels;

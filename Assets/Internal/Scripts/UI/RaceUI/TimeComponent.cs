@@ -16,7 +16,7 @@ namespace Cars_5_5.UI.RaceUI
         [SerializeField]
         private TMP_Text _lapTimeText;
         
-        private Coroutine _updateValueCoroutine;
+        private Coroutine _updateTimerCoroutine;
 
         private TimeSpan _originTime;
         private TimeSpan _bestTime = TimeSpan.MinValue;
@@ -27,10 +27,14 @@ namespace Cars_5_5.UI.RaceUI
 
         public void StartLapTimer()
         {
-            SetVisible(true);
             _originTime = DateTime.Now.TimeOfDay;
             _bestTimeText.text = TimeSpan.Zero.ToString(_timeFormat);
-            _updateValueCoroutine = StartCoroutine(UpdateTimerValueCoroutine());
+            _updateTimerCoroutine = StartCoroutine(UpdateTimerValueCoroutine());
+        }
+
+        public void StopLapTimer()
+        {
+            StopCoroutine(_updateTimerCoroutine);
         }
 
         public override void SetVisible(bool value)
@@ -61,9 +65,9 @@ namespace Cars_5_5.UI.RaceUI
 
         private void OnDisable()
         {
-            if (_updateValueCoroutine != null)
+            if (_updateTimerCoroutine != null)
             {
-                StopCoroutine(_updateValueCoroutine);
+                StopCoroutine(_updateTimerCoroutine);
             }
         }
 

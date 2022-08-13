@@ -93,7 +93,7 @@ namespace Cars_5_5.CarComponents
             else
             {
                 torgue = 0;
-                brake = 0;
+                brake = _carObserver.CarBrakes.HandBrakeTorgue;
             }
 
             foreach (AxleInfo axle in _axleInfos)
