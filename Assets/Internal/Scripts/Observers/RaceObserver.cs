@@ -21,12 +21,24 @@ namespace Cars_5_5.Observers
 
         private void Start()
         {
+            Initialize();
+
+            
             if (_raceUIBehaviour != null)
             {
                 _raceUIBehaviour.RaceStarted += OnRaceStarted;
                 _raceUIBehaviour.RaceEnded += OnRaceEnded;
             }
             RacePreStart();
+        }
+
+        private void Initialize()
+        {
+            _raceUIBehaviour = GetComponent<RaceUIBehaviour>();
+
+            _lapsPassedByCar = new Dictionary<CarObserver, int>();
+            _driveableCarsOnMap = FindObjectsOfType<BaseCarInput>();
+            Array.ForEach(_driveableCarsOnMap, car => _lapsPassedByCar.Add(car.CarObserver, 0));
         }
 
         public void RacePreStart()
@@ -76,9 +88,7 @@ namespace Cars_5_5.Observers
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            _driveableCarsOnMap = FindObjectsOfType<BaseCarInput>();
-            Array.ForEach(_driveableCarsOnMap, car => _lapsPassedByCar.Add(car.CarObserver, 0));
-            _raceUIBehaviour = GetComponent<RaceUIBehaviour>();
+            Initialize();
         }
 #endif
     }

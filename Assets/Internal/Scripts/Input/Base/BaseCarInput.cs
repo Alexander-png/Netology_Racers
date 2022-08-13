@@ -7,14 +7,23 @@ namespace Cars_5_5.Input.Base
     public abstract class BaseCarInput : MonoBehaviour
     {
         private CarObserver _carObserver;
-        public CarObserver CarObserver => _carObserver;
+        public CarObserver CarObserver
+        { 
+            get
+            {
+                if (_carObserver == null)
+                {
+                    FindCarObserver();
+                }
+                return _carObserver;
+            }
+        }
+        
         public WheelBehaviour WheelBehaviour => _carObserver.CarWheels;
 
-#if UNITY_EDITOR
-        private void OnValidate()
+        private void FindCarObserver()
         {
             _carObserver = GetComponent<CarObserver>();
         }
-#endif
     }
 }
