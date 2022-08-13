@@ -6,18 +6,17 @@ namespace Cars_5_5.CarComponents
 {
     public class WheelBehaviour : MonoBehaviour
     {
-        //[SerializeField]
-        //private CarObserver _;
         [SerializeField]
-        private EngineBehaviour _engine;
+        private CarObserver _carObserver;
         [SerializeField]
-        private SteeringBehaviour _steering;
-        [SerializeField]
-        private BrakeBehaviour _brakes;
+        private float _acceleratorToBrakeSwitchThreshold = 0.5f;
         [SerializeField]
         private List<AxleInfo> _axleInfos;
 
         private int _axleCount = 0;
+
+        private float _acceleratorPosition;
+        private float _brakePosition;
 
         private void Start()
         {
@@ -30,16 +29,19 @@ namespace Cars_5_5.CarComponents
             }
         }
 
-        public float AcceleratorPosition
+        public float VerticalAxis
         {
             get;
             set;
         }
 
-        public float BrakeAxis
+        public float SteeringAxis
         {
-            get;
-            set;
+            get => _carObserver.CarSteering.Axis;
+            set
+            {
+                _carObserver.CarSteering.Axis = value;
+            }
         }
 
         public bool OnHandBrake
@@ -48,26 +50,32 @@ namespace Cars_5_5.CarComponents
             set;
         }
 
-        public float SteeringAxis
-        {
-            get => _steering.Axis;
-            set
-            {
-
-                _steering.Axis = value;
-            }
-        }
-
         public void FixedUpdate()
         {
+            AcceleratorLogic();
             MovementLogic();
+        }
+
+        private void AcceleratorLogic()
+        {
+            if (VerticalAxis != 0)
+            {
+                float currentSpeed = _carObserver.AbsoluteCarSpeed;
+                _acceleratorPosition = GetRealAcceleratorPosition(VerticalAxis, currentSpeed);
+                _brakePosition = GetRealBrakeAxisPosition(VerticalAxis, currentSpeed);
+            }
+            else
+            {
+                _acceleratorPosition = 0;
+                _brakePosition = 0;
+            }
         }
 
         private void MovementLogic()
         {
-            float torgue = _engine.GetMotorTorgue(AcceleratorPosition, _axleCount);
-            float brake = _brakes.GetBrakeTorgue(BrakeAxis, _axleCount);
-            float steering = _steering.CurrentSteeringAngle;
+            float torgue = _carObserver.CarEngine.GetMotorTorgue(_acceleratorPosition, _axleCount);
+            float brake = _carObserver.CarBrakes.GetBrakeTorgue(_brakePosition, _axleCount);
+            float steering = _carObserver.CarSteering.CurrentSteeringAngle;
 
             foreach (AxleInfo info in _axleInfos)
             {
@@ -90,8 +98,8 @@ namespace Cars_5_5.CarComponents
                 {
                     if (OnHandBrake)
                     {
-                        info.LeftWheel.brakeTorque = _brakes.HandBrakeTorgue;
-                        info.RightWheel.brakeTorque = _brakes.HandBrakeTorgue;
+                        info.LeftWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
+                        info.RightWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
                     }
                     else if (info.HasBrake)
                     {
@@ -107,12 +115,56 @@ namespace Cars_5_5.CarComponents
             }
         }
 
+        protected float GetRealAcceleratorPosition(float axis, float currentSpeed)
+        {
+            if (_carObserver.SignedCarSpeed > 0)
+            {
+                if (axis > 0)
+                {
+                    return axis;
+                }
+                else if (currentSpeed <= _acceleratorToBrakeSwitchThreshold && axis < 0)
+                {
+                    return axis;
+                }
+            }
+            else
+            {
+                if (axis < 0)
+                {
+                    return axis;
+                }
+                else if (currentSpeed <= _acceleratorToBrakeSwitchThreshold && axis > 0)
+                {
+                    return axis;
+                }
+            }
+            return 0;
+        }
+
+        protected float GetRealBrakeAxisPosition(float axis, float currentSpeed)
+        {
+            if (_carObserver.SignedCarSpeed > 0)
+            {
+                if (currentSpeed >= _acceleratorToBrakeSwitchThreshold && axis < 0)
+                {
+                    return -axis;
+                }
+            }
+            else
+            {
+                if (currentSpeed >= _acceleratorToBrakeSwitchThreshold && axis > 0)
+                {
+                    return axis;
+                }
+            }
+            return 0;
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            _engine = GetComponent<EngineBehaviour>();
-            _brakes = GetComponent<BrakeBehaviour>();
-            _steering = GetComponent<SteeringBehaviour>();
+            _carObserver = GetComponent<CarObserver>();
         }
 #endif
     }

@@ -7,11 +7,13 @@ namespace Cars_5_5.CarComponents.Assistance
         private EngineBehaviour _carEngine;
         private WheelBehaviour _carWheels;
         private SteeringBehaviour _carSteering;
+        private BrakeBehaviour _carBrakes;
         private CarBodyBehaviour _carBody;
 
         public EngineBehaviour CarEngine => _carEngine;
         public WheelBehaviour CarWheels => _carWheels;
         public SteeringBehaviour CarSteering => _carSteering;
+        public BrakeBehaviour CarBrakes => _carBrakes;
         public CarBodyBehaviour CarBody => _carBody;
 
 #if UNITY_EDITOR
@@ -20,6 +22,7 @@ namespace Cars_5_5.CarComponents.Assistance
             _carEngine = GetComponent<EngineBehaviour>();
             _carWheels = GetComponent<WheelBehaviour>();
             _carSteering = GetComponent<SteeringBehaviour>();
+            _carBrakes = GetComponent<BrakeBehaviour>();
             _carBody = GetComponent<CarBodyBehaviour>();
         }
 #endif
