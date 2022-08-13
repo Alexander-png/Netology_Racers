@@ -1,12 +1,13 @@
 using Cars_5_5.CarComponents.Assistance;
 using Cars_5_5.Input;
+using Cars_5_5.UI.Base;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
 namespace Cars_5_5.UI.RaceUI
 {
-    public class SpeedometerComponent : MonoBehaviour
+    public class SpeedometerComponent : BaseUIElement
     {
         private const int C_ValueScale = 4;
 
@@ -45,6 +46,11 @@ namespace Cars_5_5.UI.RaceUI
         private void FindPlayerCar()
         {
             _playerCar = FindObjectOfType<PlayerInputHandler>().CarObserver;
+        }
+
+        public override void SetVisible(bool value)
+        {
+            _speedometerText.enabled = value;
         }
 
 #if UNITY_EDITOR

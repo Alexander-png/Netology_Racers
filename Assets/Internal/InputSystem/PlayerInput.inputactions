@@ -182,6 +182,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "RaceInviter",
+            "id": "acdcc073-8cd0-425f-9a7d-e18d37f33cea",
+            "actions": [
+                {
+                    "name": "Accept",
+                    "type": "Button",
+                    "id": "48dec364-1df6-4082-b248-5bfbabc2939c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b88d9073-3d99-4ff6-aabb-9a7b96e1d835",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Accept",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

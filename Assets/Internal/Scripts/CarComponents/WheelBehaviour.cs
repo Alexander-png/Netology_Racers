@@ -6,6 +6,8 @@ namespace Cars_5_5.CarComponents
 {
     public class WheelBehaviour : MonoBehaviour
     {
+        //[SerializeField]
+        //private CarObserver _;
         [SerializeField]
         private EngineBehaviour _engine;
         [SerializeField]

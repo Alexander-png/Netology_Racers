@@ -8,11 +8,21 @@ namespace Cars_5_5.Input.Base
     {
         [SerializeField]
         private float acceleratorToBrakeSwitchThreshold = 0.5f;
+        [SerializeField]
+        private bool _inputEnabled = true;
 
         private CarObserver _carObserver;
         public CarObserver CarObserver => _carObserver;
-
         public WheelBehaviour WheelBehaviour => _carObserver.CarWheels;
+
+        public bool InputEnabled
+        {
+            get => _inputEnabled;
+            set
+            {
+                _inputEnabled = value;
+            }
+        }
 
         protected float GetRealAcceleratorPosition(float axis, float currentSpeed)
         {

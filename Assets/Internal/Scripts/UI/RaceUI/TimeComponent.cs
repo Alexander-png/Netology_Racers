@@ -1,3 +1,4 @@
+using Cars_5_5.UI.Base;
 using System;
 using System.Collections;
 using TMPro;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace Cars_5_5.UI.RaceUI
 {
-    public class TimeComponent : MonoBehaviour
+    public class TimeComponent : BaseUIElement
     {
         [SerializeField]
         private string _timeFormat = @"mm\:ss\:fff";
@@ -26,9 +27,16 @@ namespace Cars_5_5.UI.RaceUI
 
         public void StartLapTimer()
         {
+            SetVisible(true);
             _originTime = DateTime.Now.TimeOfDay;
             _bestTimeText.text = TimeSpan.Zero.ToString(_timeFormat);
             _updateValueCoroutine = StartCoroutine(UpdateTimerValueCoroutine());
+        }
+
+        public override void SetVisible(bool value)
+        {
+            _bestTimeText.transform.parent.gameObject.SetActive(value);
+            _lapTimeText.transform.parent.gameObject.SetActive(value);
         }
 
         public void OnLapPassed()

@@ -11,14 +11,17 @@ namespace Cars_5_5.Input
 
         private void OnAcceleration(InputValue value)
         {
-            if (value != null)
-            {
-                _verticalAxis = value.Get<float>();
-            }
-            else
-            {
-                _verticalAxis = 0;
-            }
+            _verticalAxis = value.Get<float>();
+        }
+
+        private void OnSteering(InputValue value)
+        {
+            WheelBehaviour.SteeringAxis = value.Get<float>();
+        }
+
+        private void OnHandbrake(InputValue value)
+        {
+            WheelBehaviour.OnHandBrake = Convert.ToBoolean(value.Get<float>());
         }
 
         private void FixedUpdate()
@@ -39,16 +42,6 @@ namespace Cars_5_5.Input
                 WheelBehaviour.AcceleratorPosition = 0;
                 WheelBehaviour.BrakeAxis = 0;
             }
-        }
-
-        private void OnSteering(InputValue value)
-        {
-            WheelBehaviour.SteeringAxis = value.Get<float>();
-        }
-
-        private void OnHandbrake(InputValue value)
-        {
-            WheelBehaviour.OnHandBrake = Convert.ToBoolean(value.Get<float>());
         }
     }
 }
