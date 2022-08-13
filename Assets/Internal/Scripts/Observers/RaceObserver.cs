@@ -48,7 +48,7 @@ namespace Cars_5_5.Observers
 
         private void EnableCarsHandling(bool value)
         {
-            Array.ForEach(_driveableCarsOnMap, car => car.InputEnabled = value);
+            Array.ForEach(_driveableCarsOnMap, car => car.WheelBehaviour.InputEnabled = value);
         }
 
 #if UNITY_EDITOR

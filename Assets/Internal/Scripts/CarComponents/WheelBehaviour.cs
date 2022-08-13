@@ -12,11 +12,20 @@ namespace Cars_5_5.CarComponents
         private float _acceleratorToBrakeSwitchThreshold = 0.5f;
         [SerializeField]
         private List<AxleInfo> _axleInfos;
+        [SerializeField]
+        private bool _inputEnabled = true;
 
         private int _axleCount = 0;
 
         private float _acceleratorPosition;
         private float _brakePosition;
+        
+
+        public bool InputEnabled
+        {
+            get => _inputEnabled;
+            set => _inputEnabled = value;
+        }
 
         private void Start()
         {
@@ -73,43 +82,53 @@ namespace Cars_5_5.CarComponents
 
         private void MovementLogic()
         {
-            float torgue = _carObserver.CarEngine.GetMotorTorgue(_acceleratorPosition, _axleCount);
-            float brake = _carObserver.CarBrakes.GetBrakeTorgue(_brakePosition, _axleCount);
+            float torgue;
+            float brake;
             float steering = _carObserver.CarSteering.CurrentSteeringAngle;
-
-            foreach (AxleInfo info in _axleInfos)
+            if (InputEnabled)
             {
-                if (info.IsSteering)
+                torgue = _carObserver.CarEngine.GetMotorTorgue(_acceleratorPosition, _axleCount);
+                brake = _carObserver.CarBrakes.GetBrakeTorgue(_brakePosition, _axleCount);
+            }
+            else
+            {
+                torgue = 0;
+                brake = 0;
+            }
+
+            foreach (AxleInfo axle in _axleInfos)
+            {
+                if (axle.IsSteering)
                 {
-                    info.LeftWheel.steerAngle = steering;
-                    info.RightWheel.steerAngle = steering;
+                    axle.LeftWheel.steerAngle = steering;
+                    axle.RightWheel.steerAngle = steering;
                 }
-                if (info.IsMotor)
+                if (axle.IsMotor)
                 {
-                    info.LeftWheel.motorTorque = torgue;
-                    info.RightWheel.motorTorque = torgue;
+                    axle.LeftWheel.motorTorque = torgue;
+                    axle.RightWheel.motorTorque = torgue;
                 }
-                if (info.HasBrake)
+                if (axle.HasBrake)
                 {
-                    info.LeftWheel.brakeTorque = brake;
-                    info.RightWheel.brakeTorque = brake;
+                    axle.LeftWheel.brakeTorque = brake;
+                    axle.RightWheel.brakeTorque = brake;
                 }
-                if (info.HasHandbrake)
+                if (axle.HasHandbrake)
                 {
                     if (OnHandBrake)
                     {
-                        info.LeftWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
-                        info.RightWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
+                        axle.LeftWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
+                        axle.RightWheel.brakeTorque = _carObserver.CarBrakes.HandBrakeTorgue;
                     }
-                    else if (info.HasBrake)
+                    else if (axle.HasBrake)
                     {
-                        info.LeftWheel.brakeTorque = brake;
-                        info.RightWheel.brakeTorque = brake;
+                        axle.LeftWheel.brakeTorque = brake;
+                        axle.RightWheel.brakeTorque = brake;
                     }
                     else
                     {
-                        info.LeftWheel.brakeTorque = 0;
-                        info.RightWheel.brakeTorque = 0;
+                        axle.LeftWheel.brakeTorque = 0;
+                        axle.RightWheel.brakeTorque = 0;
                     }
                 }
             }

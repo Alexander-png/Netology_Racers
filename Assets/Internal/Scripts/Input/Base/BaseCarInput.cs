@@ -13,15 +13,6 @@ namespace Cars_5_5.Input.Base
         public CarObserver CarObserver => _carObserver;
         public WheelBehaviour WheelBehaviour => _carObserver.CarWheels;
 
-        public bool InputEnabled
-        {
-            get => _inputEnabled;
-            set
-            {
-                _inputEnabled = value;
-            }
-        }
-
 #if UNITY_EDITOR
         private void OnValidate()
         {
