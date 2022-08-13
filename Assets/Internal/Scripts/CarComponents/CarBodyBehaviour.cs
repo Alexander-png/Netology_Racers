@@ -1,7 +1,7 @@
-using Cars_4_4.CarComponents.Assistance;
+using Cars_5_5.CarComponents.Assistance;
 using UnityEngine;
 
-namespace Cars_4_4.CarComponents
+namespace Cars_5_5.CarComponents
 {
     public class CarBodyBehaviour : MonoBehaviour
     {
@@ -41,11 +41,16 @@ namespace Cars_4_4.CarComponents
             }
         }
 
+        public void SetCenterOfMass()
+        {
+            _carBody.centerOfMass = _centerOfMass;
+        }
+
         private void MoveDownForceBody()
         {
             if (_downForceBody != null)
             {
-                _downForceBody.transform.position = transform.position + _downForcePoint;
+                _downForceBody.transform.localPosition = _downForcePoint;
             }
         }
 
@@ -53,28 +58,18 @@ namespace Cars_4_4.CarComponents
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawSphere(transform.position + _carBody.centerOfMass, 0.3f);
+            Gizmos.DrawSphere(_carBody.worldCenterOfMass, 0.3f);
 
             Gizmos.color = Color.red;
-            Vector3 drawPosition = transform.position + _downForcePoint;
-            Gizmos.DrawCube(drawPosition, new Vector3(0.2f, 0.2f, 0.2f));
+            Gizmos.DrawCube(_downForceBody.transform.position, new Vector3(0.2f, 0.2f, 0.2f));
         }
 
         private void OnValidate()
         {
             SetCenterOfMass();
             _downForceBody = transform.Find("DownForcePoint").GetComponent<DownForcePointMarker>();
+            MoveDownForceBody();
         }
 #endif
-
-        public void SetCenterOfMass()
-        {
-            _carBody.centerOfMass = _centerOfMass;
-        }
-
-        public void SetDownForcePoint(Vector3 newValue)
-        {
-            _downForcePoint = newValue;
-        }
     }
 }

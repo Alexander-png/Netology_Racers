@@ -1,8 +1,8 @@
-using Cars_4_4.CarComponents;
-using Cars_4_4.CarComponents.Assistance;
+using Cars_5_5.CarComponents;
+using Cars_5_5.CarComponents.Assistance;
 using UnityEngine;
 
-namespace Cars_4_4.Input.Base
+namespace Cars_5_5.Input.Base
 {
     public abstract class BaseCarInput : MonoBehaviour
     {

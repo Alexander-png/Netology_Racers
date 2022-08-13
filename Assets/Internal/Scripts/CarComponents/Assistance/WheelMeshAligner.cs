@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Cars_4_4.CarComponents.Assistance
+namespace Cars_5_5.CarComponents.Assistance
 {
     public class WheelMeshAligner : MonoBehaviour
     {
