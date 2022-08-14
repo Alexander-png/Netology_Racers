@@ -1009,7 +1009,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6054026342946635631, guid: baf24bc42172482469eef75f84bd0861, type: 3}
       propertyPath: _motorTorque
-      value: 950
+      value: 1100
       objectReference: {fileID: 0}
     - target: {fileID: 6054026342946635633, guid: baf24bc42172482469eef75f84bd0861, type: 3}
       propertyPath: _maxSteeringAngle

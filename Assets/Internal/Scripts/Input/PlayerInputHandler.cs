@@ -7,6 +7,11 @@ namespace Cars_5_5.Input
 {
     public class PlayerInputHandler : BaseCarInput
     {
+        //private void FixedUpdate()
+        //{
+        //    UnityEngine.Debug.Log(CarObserver.SignedCarSpeed);
+        //}
+
         private void OnAcceleration(InputValue value)
         {
             WheelBehaviour.VerticalAxis = value.Get<float>();

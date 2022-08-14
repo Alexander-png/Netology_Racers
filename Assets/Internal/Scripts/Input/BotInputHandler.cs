@@ -14,7 +14,9 @@ namespace Cars_5_5.Input
         [SerializeField, Space(15)]
         private float _uTurnAngle = 120;
         [SerializeField]
-        private float _maxThrottleDistance = 60f;
+        private float _maxThrottleDistance = 50f;
+        [SerializeField]
+        private float _engineAggression = 20f;
 
         public void SetFirstWaypoint(WaypointComponent waypoint)
         {
@@ -72,31 +74,60 @@ namespace Cars_5_5.Input
 
         private void VerticalAxisLogic()
         {
-            float angleToDir = CalculateAngleForTurn();
-            if (Mathf.Abs(angleToDir) > _uTurnAngle)
+            float distanceToTargetPoint = Vector3.Distance(transform.position, _currentWaypoint.transform.position);
+            float currentSpeed = CarObserver.SignedCarSpeed;
+
+            if (Mathf.Abs(CalculateAngleForTurn()) > _uTurnAngle)
             {
                 WheelBehaviour.VerticalAxis = -1f;
             }
             else
             {
-                float distanceToTargetPoint = Vector3.Distance(transform.position, _currentWaypoint.transform.position);
-                float currentSpeed = CarObserver.SignedCarSpeed;
                 if (CanSetFullThrottle(distanceToTargetPoint))
                 {
                     WheelBehaviour.VerticalAxis = 1f;
                 }
                 else
                 {
-                    
+                    if (currentSpeed > 30f || (currentSpeed > 15 && distanceToTargetPoint < 10f))
+                    {
+                        WheelBehaviour.VerticalAxis -= 0.01f * (1.3f / distanceToTargetPoint);
+                    }
+                    else if (currentSpeed < 18f)
+                    {
+                        WheelBehaviour.VerticalAxis += 0.03f;
+                    }
+                    else
+                    {
+                        WheelBehaviour.VerticalAxis = 0f;
+                    }
                 }
             }
-            //WheelBehaviour.VerticalAxis = 0.4f;
+            Debug.Log($"Axis: {WheelBehaviour.VerticalAxis}; Speed: {currentSpeed}; DistanceToTarget: {distanceToTargetPoint};");
         }
 
         private bool CanSetFullThrottle(float distanceToTargetPoint)
         {
-            float currentSpeed = CarObserver.SignedCarSpeed;
-            return distanceToTargetPoint > _maxThrottleDistance;
+            return distanceToTargetPoint > _maxThrottleDistance && GetMaxDistanceOfNextPoints() < _engineAggression;
+        }
+
+        private float GetMaxDistanceOfNextPoints()
+        {
+            float maxDistance = 0;
+            for (int i = 0; i < _currentWaypoint.NextPoints.Length; i++)
+            {
+                float distance = GetDistanceBetweenPoints(_currentWaypoint, _currentWaypoint.NextPoints[i]);
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                }
+            }
+            return maxDistance;
+        }
+
+        private float GetDistanceBetweenPoints(WaypointComponent point1, WaypointComponent point2)
+        {
+            return Vector3.Distance(point1.transform.position, point2.transform.position);
         }
     }
 }
