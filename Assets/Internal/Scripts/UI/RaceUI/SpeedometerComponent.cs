@@ -9,7 +9,7 @@ namespace Cars_5_5.UI.RaceUI
 {
     public class SpeedometerComponent : BaseUIElement
     {
-        private const int C_ValueScale = 4;
+        private const int ValueScale = 4;
 
         [SerializeField]
         private float _updateValueFrequency = 0.03f;
@@ -38,7 +38,7 @@ namespace Cars_5_5.UI.RaceUI
         {
             while (true)
             {
-                _speedometerText.text = Mathf.RoundToInt(_playerCar.SignedCarSpeed * C_ValueScale).ToString();
+                _speedometerText.text = Mathf.RoundToInt(_playerCar.SignedCarSpeed * ValueScale).ToString();
                 yield return new WaitForSeconds(_updateValueFrequency);
             }
         }
