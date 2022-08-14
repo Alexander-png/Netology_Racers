@@ -1,4 +1,3 @@
-using Cars_5_5.CarComponents.Assistance;
 using UnityEngine;
 
 namespace Cars_5_5.CarComponents
@@ -12,8 +11,6 @@ namespace Cars_5_5.CarComponents
         [SerializeField]
         private float _baseSteeringReturnSpeed;
 
-        private CarObserver _carObserver;
-
         public float MaxSteeringAngle => _maxSteeringAngle;
 
         public float CurrentSteeringAngle { get; private set; }
@@ -26,7 +23,6 @@ namespace Cars_5_5.CarComponents
 
         private void UpdateSteeringAngle()
         {
-            //float carSpeed = _carObserver.GetCarSpeed();
             float fixedTime = Time.fixedDeltaTime;
             if (Axis == 0f && CurrentSteeringAngle != 0f)
             {
@@ -34,15 +30,19 @@ namespace Cars_5_5.CarComponents
             }
             else
             {
-                CurrentSteeringAngle = Mathf.Clamp(CurrentSteeringAngle + Axis * (_steeringSensivity * fixedTime), -_maxSteeringAngle, _maxSteeringAngle);
+                float targetSteeringAngle = _maxSteeringAngle * Axis;
+                if (Mathf.Abs(CurrentSteeringAngle - targetSteeringAngle) > 0.001f)
+                {
+                    if (Mathf.Abs(targetSteeringAngle) < Mathf.Abs(CurrentSteeringAngle))
+                    {
+                        CurrentSteeringAngle += (CurrentSteeringAngle > 0f ? -fixedTime : fixedTime) * _baseSteeringReturnSpeed;
+                    }
+                    else
+                    {
+                        CurrentSteeringAngle = Mathf.Clamp(CurrentSteeringAngle + Axis * (_steeringSensivity * fixedTime), -_maxSteeringAngle, _maxSteeringAngle);
+                    }
+                }  
             }
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            _carObserver = GetComponent<CarObserver>();
-        }
-#endif
     }
 }

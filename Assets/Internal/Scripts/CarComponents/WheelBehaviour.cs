@@ -19,7 +19,7 @@ namespace Cars_5_5.CarComponents
 
         private float _acceleratorPosition;
         private float _brakePosition;
-        
+        private float _verticalAxis;
 
         public bool InputEnabled
         {
@@ -40,8 +40,11 @@ namespace Cars_5_5.CarComponents
 
         public float VerticalAxis
         {
-            get;
-            set;
+            get => _verticalAxis;
+            set
+            {
+                _verticalAxis = Mathf.Clamp(value, -1, 1);
+            }
         }
 
         public float SteeringAxis
@@ -49,7 +52,7 @@ namespace Cars_5_5.CarComponents
             get => _carObserver.CarSteering.Axis;
             set
             {
-                _carObserver.CarSteering.Axis = value;
+                _carObserver.CarSteering.Axis = Mathf.Clamp(value, -1, 1);
             }
         }
 
@@ -58,6 +61,8 @@ namespace Cars_5_5.CarComponents
             get;
             set;
         }
+
+        public float MaxSteeringAngle => _carObserver.CarSteering.MaxSteeringAngle;
 
         public void FixedUpdate()
         {

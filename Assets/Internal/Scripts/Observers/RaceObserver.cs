@@ -1,3 +1,4 @@
+using Cars_5_5.BotAssistance;
 using Cars_5_5.CarComponents.Assistance;
 using Cars_5_5.Input;
 using Cars_5_5.Input.Base;
@@ -26,6 +27,8 @@ namespace Cars_5_5.Observers
         private BaseCarInput[] _driveableCarsOnMap;
         [SerializeField]
         private int _laps;
+        [SerializeField]
+        private WaypointComponent _firstWaypoint;
 
         private Dictionary<CarObserver, int> _lapsPassedByCar = new Dictionary<CarObserver, int>();
         private Dictionary<CarObserver, CarStartPosition> _carStartPositions = new Dictionary<CarObserver, CarStartPosition>();
@@ -43,6 +46,8 @@ namespace Cars_5_5.Observers
             _raceUIBehaviour = GetComponent<RaceUIBehaviour>();
             _raceUIBehaviour.SetRaceObserver(this);
             FindCarsOnTrack();
+            FindFirstWaypoint();
+            GiveFirstWaypointToBots();
         }
 
         private void FindCarsOnTrack()
@@ -57,6 +62,31 @@ namespace Cars_5_5.Observers
                 _lapsPassedByCar.Add(car.CarObserver, 0);
                 _carStartPositions.Add(car.CarObserver, new CarStartPosition() { Position = car.transform.position, Rotation = car.transform.rotation });
             }
+        }
+
+        private void FindFirstWaypoint()
+        {
+            WaypointComponent[] waypointsOnMap = FindObjectsOfType<WaypointComponent>();
+            foreach(var waypoint in waypointsOnMap)
+            {
+                if (waypoint.IsFirst)
+                {
+                    _firstWaypoint = waypoint;
+                    break;
+                }
+            }
+        }
+
+        private void GiveFirstWaypointToBots()
+        {
+            foreach (BaseCarInput car in _driveableCarsOnMap)
+            {
+                if (car is BotInputHandler bot)
+                {
+                    bot.SetFirstWaypoint(_firstWaypoint);
+                }
+            }
+
         }
 
         public void OnRaceRestart(object sender, EventArgs e)
