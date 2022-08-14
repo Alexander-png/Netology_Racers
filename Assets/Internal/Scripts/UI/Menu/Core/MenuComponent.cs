@@ -1,22 +1,23 @@
-using Cars_5_5.Assistance;
-using Cars_5_5.UI.MainMenu.ActionTypes;
-using Cars_5_5.UI.MainMenu.Items;
+using Cars_5_5.UI.Menu.ActionTypes;
+using Cars_5_5.UI.Menu.Items;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
-namespace Cars_5_5.UI.MainMenu
+namespace Cars_5_5.UI.Menu.Core
 {
-    public class MainMenuComponent : MonoBehaviour
+    [RequireComponent((typeof(PlayerInput)))]
+    public class MenuComponent : MonoBehaviour
     {
         [SerializeField]
         private MenuItemMarker[] _menuItems;
 
         private int _selectionIndex = 0;
+
+        public delegate void MenuEventHandler(Actions selectedAction);
+
+        public event MenuEventHandler OptionSelected;
 
         private void Start()
         {
@@ -25,6 +26,7 @@ namespace Cars_5_5.UI.MainMenu
 
         private void Initialize()
         {
+            FindAndSortMenuItems();
             if (_menuItems?.Length != 0)
             {
                 try
@@ -36,6 +38,19 @@ namespace Cars_5_5.UI.MainMenu
                 {
 
                 }
+            }
+        }
+
+        private void FindAndSortMenuItems()
+        {
+            try
+            {
+                _menuItems = FindObjectsOfType<MenuItemMarker>();
+                Array.Sort(_menuItems, new Comparison<MenuItemMarker>((item1, item2) => item1.SelectionIndex.CompareTo(item2.SelectionIndex)));
+            }
+            catch (InvalidOperationException)
+            {
+                Debug.LogError("No selected item found, or no menu items found!");
             }
         }
 
@@ -64,50 +79,13 @@ namespace Cars_5_5.UI.MainMenu
 
         private void OnSelect(InputValue value)
         {
-            ProcessSelection();
-        }
-
-        private void ProcessSelection()
-        {
-            switch (_menuItems[_selectionIndex].ActionType)
-            {
-                case Actions.Start_Game:
-                    SceneHelper.SwitchScene("Track");
-                    break;
-                case Actions.Tuning:
-                    Debug.Log("TODO: tuning");
-                    break;
-                case Actions.Settings:
-                    Debug.Log("TODO: settings");
-                    break;
-                case Actions.Exit:
-#if UNITY_EDITOR
-                    EditorApplication.ExitPlaymode();
-#else
-                    Application.Quit(0);
-#endif
-                    break;
-            }
+            OptionSelected?.Invoke(_menuItems[_selectionIndex].ActionType);
         }
 
 #if UNITY_EDITOR
-
         private void OnValidate()
         {
             FindAndSortMenuItems();
-        }
-
-        private void FindAndSortMenuItems()
-        {
-            try
-            {
-                _menuItems = FindObjectsOfType<MenuItemMarker>();
-                Array.Sort(_menuItems, new Comparison<MenuItemMarker>((item1, item2) => item1.SelectionIndex.CompareTo(item2.SelectionIndex)));
-            }
-            catch (InvalidOperationException)
-            {
-                Debug.LogError("No selected item found, or no menu items found!");
-            }
         }
 #endif
     }

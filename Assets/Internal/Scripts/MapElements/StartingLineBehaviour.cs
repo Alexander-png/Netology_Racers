@@ -6,6 +6,7 @@ namespace Cars_5_5.MapElements
 {
     public class StartingLineBehaviour : MonoBehaviour
     {
+        [SerializeField]
         private RaceObserver _raceObserver;
 
         private void OnTriggerEnter(Collider other)

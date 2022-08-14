@@ -54,6 +54,11 @@ namespace Cars_5_5.CarComponents
             }
         }
 
+        public void StopImmediately()
+        {
+            _carBody.velocity = Vector3.zero;
+        }
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

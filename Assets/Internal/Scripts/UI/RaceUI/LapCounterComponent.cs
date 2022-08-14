@@ -18,7 +18,7 @@ namespace Cars_5_5.UI.RaceUI
         public int LapsCount => _laps;
         public int CurrentLap => _currentLap;
 
-        public void OnRaceStarted()
+        public void ResetCounter()
         {
             _currentLap = 0;
             _lapsPassedCountText.text = "1";

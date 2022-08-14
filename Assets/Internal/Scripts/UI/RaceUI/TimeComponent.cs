@@ -28,6 +28,7 @@ namespace Cars_5_5.UI.RaceUI
         public void StartLapTimer()
         {
             _originTime = DateTime.Now.TimeOfDay;
+            _bestTime = TimeSpan.MinValue;
             _bestTimeText.text = TimeSpan.Zero.ToString(_timeFormat);
             _updateTimerCoroutine = StartCoroutine(UpdateTimerValueCoroutine());
         }

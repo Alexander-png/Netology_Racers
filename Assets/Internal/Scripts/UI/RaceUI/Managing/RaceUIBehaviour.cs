@@ -1,3 +1,4 @@
+using Cars_5_5.Observers;
 using Cars_5_5.UI.Base;
 using Cars_5_5.UI.RaceUI.LeaderTableElements;
 using System;
@@ -25,7 +26,12 @@ namespace Cars_5_5.UI.RaceUI.Managing
         [SerializeField]
         private AddRecordDialog _addRecordDialog;
 
-        public EventHandler StartCountDownElapsed;
+        private IRaceObserver _raceObserver;
+
+        public void SetRaceObserver(IRaceObserver observer)
+        {
+            _raceObserver = observer;
+        }
 
         public void RacePreStart()
         {
@@ -50,7 +56,6 @@ namespace Cars_5_5.UI.RaceUI.Managing
                 SetUIElementVisible(_leaderBoard, false);
 
                 _raceInviter.StartAccept += OnRaceStartAccept;
-                _countDown.Elapsed += OnCountDownElapsed;
             }
         }
 
@@ -58,7 +63,6 @@ namespace Cars_5_5.UI.RaceUI.Managing
         {
             _raceInviter.StartAccept -= OnRaceStartAccept;
             _countDown.Elapsed -= OnCountDownElapsed;
-            StartCountDownElapsed = null;
         }
 
         public void OnLapPassedByPlayer()
@@ -73,12 +77,15 @@ namespace Cars_5_5.UI.RaceUI.Managing
         private void OnRaceStartAccept(object sender, EventArgs e)
         {
             SetUIElementVisible(_raceInviter, false);
+
+            _countDown.Elapsed += OnCountDownElapsed;
             _countDown.StartCountDown();
         }
 
         private void OnCountDownElapsed(object sender, EventArgs e)
         {
-            StartCountDownElapsed?.Invoke(this, EventArgs.Empty);
+            _raceObserver.OnStartCountDownElapsed(this, EventArgs.Empty);
+
             SetRaceUIState(true);
         }
 
@@ -98,7 +105,9 @@ namespace Cars_5_5.UI.RaceUI.Managing
         private void OnRecordAdded(object sender, EventArgs e)
         {
             SetUIElementVisible(_addRecordDialog, false);
+
             SetUIElementVisible(_leaderBoard, true);
+            _leaderBoard.OnRaceRestartSelectedInMenu += _raceObserver.OnRaceRestart;
         }
 
         private void SetRaceUIState(bool inRace)
@@ -110,7 +119,7 @@ namespace Cars_5_5.UI.RaceUI.Managing
             if (inRace)
             {
                 _raceTimer.StartLapTimer();
-                _lapCounter.OnRaceStarted();
+                _lapCounter.ResetCounter();
             }
             else
             {

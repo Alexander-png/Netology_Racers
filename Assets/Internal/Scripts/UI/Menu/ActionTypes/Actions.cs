@@ -1,4 +1,4 @@
-namespace Cars_5_5.UI.MainMenu.ActionTypes
+namespace Cars_5_5.UI.Menu.ActionTypes
 {
     public enum Actions : byte
     {
@@ -6,5 +6,7 @@ namespace Cars_5_5.UI.MainMenu.ActionTypes
         Tuning = 1,
         Settings = 2,
         Exit = 3,
+        RestartRace = 4,
+        ExitToMainMenu = 5,
     }
 }

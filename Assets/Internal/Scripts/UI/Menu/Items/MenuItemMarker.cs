@@ -1,8 +1,8 @@
-using Cars_5_5.UI.MainMenu.ActionTypes;
+using Cars_5_5.UI.Menu.ActionTypes;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Cars_5_5.UI.MainMenu.Items
+namespace Cars_5_5.UI.Menu.Items
 {
     public class MenuItemMarker : MonoBehaviour
     {
