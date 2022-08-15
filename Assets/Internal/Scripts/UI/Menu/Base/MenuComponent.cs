@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Cars_5_5.UI.Menu.Core
+namespace Cars_5_5.UI.Menu.Base
 {
     [RequireComponent((typeof(PlayerInput)))]
     public class MenuComponent : MonoBehaviour
@@ -13,11 +13,28 @@ namespace Cars_5_5.UI.Menu.Core
         [SerializeField]
         private MenuItemMarker[] _menuItems;
 
+        protected MenuItemMarker[] MenuItems
+        {
+            get
+            {
+                MenuItemMarker[] toReturn = new MenuItemMarker[_menuItems.Length];
+                Array.Copy(_menuItems, toReturn, _menuItems.Length);
+                return toReturn;
+            }
+        }
+
         private int _selectionIndex = 0;
+
+        protected int SelectionIndex => _selectionIndex;
 
         public delegate void MenuEventHandler(Actions selectedAction);
 
         public event MenuEventHandler OptionSelected;
+
+        protected virtual void OnDisable()
+        {
+            OptionSelected = null;
+        }
 
         private void Start()
         {
@@ -54,7 +71,7 @@ namespace Cars_5_5.UI.Menu.Core
             }
         }
 
-        private void OnSelectionChanging(InputValue value)
+        protected virtual void OnSelectionChanging(InputValue value)
         {
             int newIndex = _selectionIndex + Convert.ToInt32(value.Get<float>());
 
@@ -77,7 +94,7 @@ namespace Cars_5_5.UI.Menu.Core
             _menuItems[_selectionIndex].IsSelected = true;
         }
 
-        private void OnSelect(InputValue value)
+        protected virtual void OnSelect(InputValue value)
         {
             OptionSelected?.Invoke(_menuItems[_selectionIndex].ActionType);
         }

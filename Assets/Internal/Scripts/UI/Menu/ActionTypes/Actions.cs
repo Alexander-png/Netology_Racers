@@ -8,5 +8,8 @@ namespace Cars_5_5.UI.Menu.ActionTypes
         Exit = 3,
         RestartRace = 4,
         ExitToMainMenu = 5,
+        ChangeMaxThrottle = 6,
+        ChangeMaxTurnAngle = 7,
+        ChangeMaxBrakeAxis = 8,
     }
 }

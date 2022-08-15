@@ -1,5 +1,5 @@
 using Cars_5_5.UI.Menu.ActionTypes;
-using Cars_5_5.UI.Menu.Core;
+using Cars_5_5.UI.Menu.Base;
 using UnityEngine;
 
 namespace Cars_5_5.UI.Menu.Handlers.Base
@@ -8,7 +8,7 @@ namespace Cars_5_5.UI.Menu.Handlers.Base
     public abstract class BaseMenuHandler : MonoBehaviour
     {
         private MenuComponent _menu;
-        private MenuComponent Menu
+        protected MenuComponent Menu
         {
             get
             {

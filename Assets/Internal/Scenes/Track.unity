@@ -4457,7 +4457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253daed41911b9046ac083dc2c5119f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startRaceImmediate: 1
+  _startRaceImmediate: 0
   _raceTimer: {fileID: 1765968078}
   _raceInviter: {fileID: 538014941}
   _countDown: {fileID: 1324016249}

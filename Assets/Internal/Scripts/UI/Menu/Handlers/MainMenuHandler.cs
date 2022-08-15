@@ -15,7 +15,7 @@ namespace Cars_5_5.UI.Menu.Handlers
                     SceneHelper.SwitchScene("Track");
                     break;
                 case Actions.Tuning:
-                    Debug.Log("TODO: tuning");
+                    SceneHelper.SwitchScene("TuningScene");
                     break;
                 case Actions.Settings:
                     Debug.Log("TODO: settings");
