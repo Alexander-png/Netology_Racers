@@ -43,7 +43,7 @@ namespace Cars_5_5.UI.RaceUI.LeaderTableElements
                 RacerName = _inputField.text,
                 BestLap = BestTimeLap,
             };
-            PlayerResultLoader.AddRecord(newRecord);
+            PlayerResult.AddRecord(newRecord);
         }
     }
 }

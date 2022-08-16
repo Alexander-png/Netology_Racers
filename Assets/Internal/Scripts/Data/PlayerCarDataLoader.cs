@@ -9,10 +9,10 @@ namespace Cars_5_5.Assets.Internal.Scripts.Data
         public float MaxTurnAngle;
         public float MaxBrakeTorgue;
         public float CarMass;
-        public float DownForce;
+        public float Downforce;
     }
 
-    public class PlayerCarDataLoader
+    public class PlayerTuningData
     {
         private const string PlayerCarDataKey = "PlayerCarData";
 

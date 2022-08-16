@@ -103,7 +103,9 @@ namespace Cars_5_5.Input
                     }
                 }
             }
+#if UNITY_EDITOR
             Debug.Log($"Axis: {WheelBehaviour.VerticalAxis}; Speed: {currentSpeed}; DistanceToTarget: {distanceToTargetPoint};");
+#endif
         }
 
         private bool CanSetFullThrottle(float distanceToTargetPoint)

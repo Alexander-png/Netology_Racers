@@ -16,6 +16,31 @@ namespace Cars_5_5.CarComponents.Assistance
         public BrakeBehaviour CarBrakes => _carBrakes;
         public CarBodyBehaviour CarBody => _carBody;
 
+        public void SetMaxMotorTorgue(float value)
+        {
+            CarEngine.SetMaxTorgue(value);
+        }
+
+        public void SetMaxBrakeTorgue(float value)
+        {
+            CarBrakes.SetMaxTorgue(value);
+        }
+
+        public void SetMaxSteeringAngle(float value)
+        {
+            CarSteering.SetMaxAngle(value);
+        }
+
+        public void SetCarMass(float value)
+        {
+            CarBody.SetMass(value);
+        }
+
+        public void SetDownforce(float value)
+        {
+            CarBody.SetDownforce(value);
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {

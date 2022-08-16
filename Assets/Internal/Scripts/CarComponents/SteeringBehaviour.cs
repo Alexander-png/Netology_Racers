@@ -44,5 +44,10 @@ namespace Cars_5_5.CarComponents
                 }  
             }
         }
+
+        public void SetMaxAngle(float value)
+        {
+            _maxSteeringAngle = value;
+        }
     }
 }

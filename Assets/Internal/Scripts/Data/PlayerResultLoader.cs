@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Cars_5_5.Data
 {
-    public class PlayerResultLoader
+    public class PlayerResult
     {
         private const string PlayerResultsKey = "LeaderTableData";
         private static List<LeaderTableRecordData> _records;

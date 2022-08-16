@@ -16,5 +16,10 @@ namespace Cars_5_5.CarComponents
         {
             return (_maxBrakeTorque * brakePosition) / axleCount;
         }
+
+        public void SetMaxTorgue(float value)
+        {
+            _maxBrakeTorque = value;
+        }
     }
 }

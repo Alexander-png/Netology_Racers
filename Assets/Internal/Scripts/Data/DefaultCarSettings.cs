@@ -8,7 +8,7 @@
             MaxTurnAngle = 30f,
             MaxBrakeTorgue = 1500f,
             CarMass = 1200,
-            DownForce = 5,
+            Downforce = 5,
         };
     }
 }

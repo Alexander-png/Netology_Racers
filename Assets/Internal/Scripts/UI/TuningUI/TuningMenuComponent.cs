@@ -59,7 +59,7 @@ namespace Cars_5_5.UI.TuningUI
                             tuningItem.Value = newData.CarMass.ToString();
                             break;
                         case Actions.ChangeDownForce:
-                            tuningItem.Value = newData.DownForce.ToString();
+                            tuningItem.Value = newData.Downforce.ToString();
                             break;
                     }
                 }

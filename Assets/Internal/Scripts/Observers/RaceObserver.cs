@@ -1,3 +1,4 @@
+using Cars_5_5.Assets.Internal.Scripts.Data;
 using Cars_5_5.BotAssistance;
 using Cars_5_5.CarComponents.Assistance;
 using Cars_5_5.Input;
@@ -37,8 +38,8 @@ namespace Cars_5_5.Observers
         private void Start()
         {
             Initialize();
-
             RacePreStart();
+            SetTuningValuesToPlayerCar();
         }
 
         private void Initialize()
@@ -86,7 +87,25 @@ namespace Cars_5_5.Observers
                     bot.SetFirstWaypoint(_firstWaypoint);
                 }
             }
+        }
 
+        private void SetTuningValuesToPlayerCar()
+        {
+            if (Array.Find(_driveableCarsOnMap, car => car is PlayerInputHandler) is PlayerInputHandler playerCar)
+            {
+                PlayerCarData data = PlayerTuningData.LoadPlayerCarData();
+                playerCar.CarObserver.SetMaxMotorTorgue(data.MaxMotorTorgue);
+                playerCar.CarObserver.SetMaxBrakeTorgue(data.MaxBrakeTorgue);
+                playerCar.CarObserver.SetMaxSteeringAngle(data.MaxTurnAngle);
+                playerCar.CarObserver.SetCarMass(data.CarMass);
+                playerCar.CarObserver.SetDownforce(data.Downforce);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                Debug.LogWarning("Player car is not found!");
+#endif
+            }
         }
 
         public void OnRaceRestart(object sender, EventArgs e)

@@ -77,7 +77,7 @@ namespace Cars_5_5.UI.Menu.Handlers
                     _currentPlayerCarData.CarMass += value * 50;
                     break;
                 case Actions.ChangeDownForce:
-                    _currentPlayerCarData.DownForce += value * 0.5f;
+                    _currentPlayerCarData.Downforce += value * 0.5f;
                     break;
             }
             RefreshVisualData();
@@ -90,12 +90,12 @@ namespace Cars_5_5.UI.Menu.Handlers
 
         private void LoadCarData()
         {
-            _currentPlayerCarData = PlayerCarDataLoader.LoadPlayerCarData();
+            _currentPlayerCarData = PlayerTuningData.LoadPlayerCarData();
         }
 
         private void SaveCarData()
         {
-            PlayerCarDataLoader.SavePlayerCarData(_currentPlayerCarData);
+            PlayerTuningData.SavePlayerCarData(_currentPlayerCarData);
         }
     }
 }

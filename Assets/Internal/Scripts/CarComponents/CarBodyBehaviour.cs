@@ -24,7 +24,7 @@ namespace Cars_5_5.CarComponents
         private void Start()
         {
             SetCenterOfMass();
-            MoveDownForceBody();
+            MoveDownforceBody();
         }
 
         private void FixedUpdate()
@@ -46,7 +46,7 @@ namespace Cars_5_5.CarComponents
             _carBody.centerOfMass = _centerOfMass;
         }
 
-        private void MoveDownForceBody()
+        private void MoveDownforceBody()
         {
             if (_downForceBody != null)
             {
@@ -57,6 +57,16 @@ namespace Cars_5_5.CarComponents
         public void StopImmediately()
         {
             _carBody.velocity = Vector3.zero;
+        }
+
+        public void SetMass(float value)
+        {
+            _carBody.mass = value;
+        }
+
+        public void SetDownforce(float value)
+        {
+            _downForce = value;
         }
 
 #if UNITY_EDITOR
@@ -73,7 +83,7 @@ namespace Cars_5_5.CarComponents
         {
             SetCenterOfMass();
             _downForceBody = transform.Find("DownForcePoint").GetComponent<DownForcePointMarker>();
-            MoveDownForceBody();
+            MoveDownforceBody();
         }
 #endif
     }

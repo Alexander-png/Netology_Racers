@@ -53,7 +53,7 @@ namespace Cars_5_5.UI.RaceUI.LeaderTableElements
 
         private void Load()
         {
-            List<LeaderTableRecordData> records = PlayerResultLoader.GetRecords();
+            List<LeaderTableRecordData> records = PlayerResult.GetRecords();
             records.Sort((a, b) => TimeSpan.Compare(a.BestLap, b.BestLap));
 
             float recordHeight = (_recordPrefab.transform as RectTransform).rect.height;
