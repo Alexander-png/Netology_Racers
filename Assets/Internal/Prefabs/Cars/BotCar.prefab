@@ -177,3 +177,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentWaypoint: {fileID: 0}
+  _uTurnAngle: 120
+  _maxThrottleDistance: 50
+  _engineAggression: 20

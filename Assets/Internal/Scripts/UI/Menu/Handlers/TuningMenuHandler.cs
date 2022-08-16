@@ -1,3 +1,4 @@
+using Cars_5_5.Assets.Internal.Scripts.Data;
 using Cars_5_5.Assistance;
 using Cars_5_5.UI.Menu.ActionTypes;
 using Cars_5_5.UI.Menu.Handlers.Base;
@@ -9,12 +10,46 @@ namespace Cars_5_5.UI.Menu.Handlers
     {
         private Actions _selectedAction;
         private TuningMenuComponent _parentMenu;
+        private TuningMenuComponent ParentMenu
+        {
+            get
+            {
+                if (_parentMenu == null)
+                {
+                    _parentMenu = Menu as TuningMenuComponent;
+                }
+                return _parentMenu;
+            }
+        }
+
+        private PlayerCarData _currentPlayerCarData;
+
+        private void Start()
+        {
+            LoadCarData();
+            RefreshVisualData();
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            ParentMenu.ValueChanging += OnValueChangingHandler;
+            ParentMenu.SelectionChanging += OnSelectionChangingHandler;
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            ParentMenu.ValueChanging -= OnValueChangingHandler;
+            ParentMenu.SelectionChanging -= OnSelectionChangingHandler;
+        }
 
         protected override void OnMenuOptionSelected(Actions selectedAction)
         {
             switch (selectedAction)
             {
                 case Actions.ExitToMainMenu:
+                    SaveCarData();
                     SceneHelper.SwitchScene("MenuScene");
                     break;
             }
@@ -27,37 +62,40 @@ namespace Cars_5_5.UI.Menu.Handlers
 
         private void OnValueChangingHandler(int value)
         {
-            UnityEngine.Debug.Log(value);
-
-            // TODO: change car values
             switch (_selectedAction)
             {
                 case Actions.ChangeMaxThrottle:
-
+                    _currentPlayerCarData.MaxMotorTorgue += value * 50;
                     break;
                 case Actions.ChangeMaxTurnAngle:
-
+                    _currentPlayerCarData.MaxTurnAngle += value * 0.5f;
                     break;
                 case Actions.ChangeMaxBrakeAxis:
-
+                    _currentPlayerCarData.MaxBrakeTorgue += value * 50;
+                    break;
+                case Actions.ChangeCarMass:
+                    _currentPlayerCarData.CarMass += value * 50;
+                    break;
+                case Actions.ChangeDownForce:
+                    _currentPlayerCarData.DownForce += value * 0.5f;
                     break;
             }
+            RefreshVisualData();
         }
 
-        protected override void OnEnable()
+        private void RefreshVisualData()
         {
-            base.OnEnable();
-            _parentMenu = Menu as TuningMenuComponent;
-
-            _parentMenu.ValueChanging += OnValueChangingHandler;
-            _parentMenu.SelectionChanging += OnSelectionChangingHandler;
+            ParentMenu.OnValuesChanged(_currentPlayerCarData);
         }
 
-        protected override void OnDisable()
+        private void LoadCarData()
         {
-            base.OnDisable();
-            _parentMenu.ValueChanging -= OnValueChangingHandler;
-            _parentMenu.SelectionChanging -= OnSelectionChangingHandler;
+            _currentPlayerCarData = PlayerCarDataLoader.LoadPlayerCarData();
+        }
+
+        private void SaveCarData()
+        {
+            PlayerCarDataLoader.SavePlayerCarData(_currentPlayerCarData);
         }
     }
 }

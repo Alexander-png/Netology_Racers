@@ -11,5 +11,7 @@ namespace Cars_5_5.UI.Menu.ActionTypes
         ChangeMaxThrottle = 6,
         ChangeMaxTurnAngle = 7,
         ChangeMaxBrakeAxis = 8,
+        ChangeCarMass = 9,
+        ChangeDownForce = 10,
     }
 }

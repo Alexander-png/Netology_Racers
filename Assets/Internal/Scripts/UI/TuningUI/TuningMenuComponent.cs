@@ -1,3 +1,4 @@
+using Cars_5_5.Assets.Internal.Scripts.Data;
 using Cars_5_5.UI.Menu.ActionTypes;
 using Cars_5_5.UI.Menu.Base;
 using System;
@@ -13,9 +14,10 @@ namespace Cars_5_5.UI.TuningUI
         public event TuningValueMenuEventHandler ValueChanging;
         public event SelectionChangingTuningMenuEventHandler SelectionChanging;
 
-        private void Start()
+        protected override void Start()
         {
-            UpdateValues();
+            base.Start();
+            SelectionChanging?.Invoke(MenuItems[SelectionIndex].ActionType);
         }
 
         protected override void OnDisable()
@@ -34,18 +36,39 @@ namespace Cars_5_5.UI.TuningUI
         private void OnValueChanging(InputValue value)
         {
             ValueChanging?.Invoke(Convert.ToInt32(value.Get<float>()));
-            UpdateValues();
         }
 
-        private void UpdateValues()
+        private void UpdateValuesInMenuItems(PlayerCarData newData)
         {
             foreach (var item in MenuItems)
             {
                 if (item is TuningMenuItem tuningItem)
                 {
-                    // tuningItem.Value = TODO: load values from player prefs.
+                    switch (tuningItem.ActionType)
+                    {
+                        case Actions.ChangeMaxThrottle:
+                            tuningItem.Value = newData.MaxMotorTorgue.ToString();
+                            break;
+                        case Actions.ChangeMaxTurnAngle:
+                            tuningItem.Value = newData.MaxTurnAngle.ToString();
+                            break;
+                        case Actions.ChangeMaxBrakeAxis:
+                            tuningItem.Value = newData.MaxBrakeTorgue.ToString();
+                            break;
+                        case Actions.ChangeCarMass:
+                            tuningItem.Value = newData.CarMass.ToString();
+                            break;
+                        case Actions.ChangeDownForce:
+                            tuningItem.Value = newData.DownForce.ToString();
+                            break;
+                    }
                 }
             }
+        }
+
+        public void OnValuesChanged(PlayerCarData newData)
+        {
+            UpdateValuesInMenuItems(newData);
         }
     }
 }

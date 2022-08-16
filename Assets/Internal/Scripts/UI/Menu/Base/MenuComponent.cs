@@ -36,7 +36,7 @@ namespace Cars_5_5.UI.Menu.Base
             OptionSelected = null;
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             Initialize();
         }
